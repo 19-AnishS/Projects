@@ -1,0 +1,168 @@
+<?php
+
+$name = $_POST['name'];
+$email  = $_POST['email'];
+$password = $_POST['password'];
+$confirmpassword = $_POST['confirmpassword'];
+
+if (!empty($name) || !empty($email) || !empty($password) || !empty($confirmpassword)) {
+
+    $host = "localhost";
+    $dbusername = "root";
+    $dbpassword = "";
+    $dbname = "ecoproduct";
+
+    // Create connection
+    $conn = new mysqli($host, $dbusername, $dbpassword, $dbname);
+
+    if (mysqli_connect_error()) {
+        die('Connect Error ('. mysqli_connect_errno() .') ' . mysqli_connect_error());
+    } else {
+        $SELECT = "SELECT email From signup Where email = ? Limit 1";
+        $INSERT = "INSERT Into signup (name , email ,password, confirmpassword )values(?,?,?,?)";
+
+        //Prepare statement
+        $stmt = $conn->prepare($SELECT);
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $stmt->bind_result($email);
+        $stmt->store_result();
+        $rnum = $stmt->num_rows;
+
+        //checking username
+        if ($rnum == 0) {
+            $stmt->close();
+            $stmt = $conn->prepare($INSERT);
+            $stmt->bind_param("ssss", $name, $email, $password, $confirmpassword);
+            $stmt->execute();
+
+            // Close database connection
+            $conn->close();
+
+            // Return success response
+            echo json_encode(array("success" => true));
+            exit();
+        } else {
+            echo json_encode(array("success" => false, "message" => "Someone already registered using this email"));
+            exit();
+        }
+    }
+} else {
+    echo json_encode(array("success" => false, "message" => "All fields are required"));
+    exit();
+}
+?>
+
+
+
+thrlaa but potuko edhukum
+<!--<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Permission Request</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'poppins',sans-serif;
+        }
+        .popup-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999; /* Ensure it's above other content */
+        }
+        .popup {
+            width: 400px;
+            background: #fff;
+            border-radius: 6px;
+            text-align: center;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+        .popup h2 {
+            font-size: 24px;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+        .popup button {
+            width: 120px;
+            margin: 10px;
+            padding: 10px 0;
+            background: #6fd649;
+            color: #fff;
+            border: 0;
+            outline: none;
+            font-size: 18px;
+            border-radius: 4px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="popup-container" id="popup-container" style="display: none;">
+        <div class="popup" id="popup">
+            <h2>Allow to Access Your Location?</h2>
+            <button type="button" onclick="allowLocation()">Allow</button>
+            <button type="button" onclick="showLocationMessage()">Cancel</button>
+        </div>
+    </div>
+
+    <div class="popup-container" id="location-message-container" style="display: none;">
+        <div class="popup" id="location-message">
+            <h2>Please Turn On Location</h2>
+            <p>Please turn on the location to see the nearby Eco-shops</p>
+            <button type="button" onclick="closeLocationMessage()">OK</button>
+        </div>
+    </div>
+
+    <script>
+        function openPopup(){
+            let popupContainer = document.getElementById("popup-container");
+            popupContainer.style.display = "block";
+        }
+
+        function allowLocation() {
+            navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
+        }
+
+        function successCallback(position) {
+            // Handle successful retrieval of user's position
+            console.log("User's position:", position.coords.latitude, position.coords.longitude);
+            // You can do further processing here
+            closePopup();
+        }
+
+        function errorCallback(error) {
+            // Handle error when user denies location access or any other error occurs
+            console.error("Error getting user's location:", error);
+            // You can provide feedback to the user here
+            showLocationMessage();
+            closePopup();
+        }
+
+        function showLocationMessage() {
+            let locationMessageContainer = document.getElementById("location-message-container");
+            locationMessageContainer.style.display = "block";
+        }
+
+        function closeLocationMessage() {
+            let locationMessageContainer = document.getElementById("location-message-container");
+            locationMessageContainer.style.display = "none";
+        }
+
+        function closePopup() {
+            let popupContainer = document.getElementById("popup-container");
+            popupContainer.style.display = "none";
+        }
+
+        // Call openPopup function after 500 milliseconds
+        setTimeout(openPopup, 500);
+    </script>
+</body>
+</html>-->
